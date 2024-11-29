@@ -1,0 +1,6 @@
+.env
+./firebase-service-account.json
+firebase-service-account.json
+./uploadMock.js
+node_modules
+node_modules/*

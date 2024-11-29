@@ -1,0 +1,27 @@
+[
+  {
+    "title": "How to Create an Article",
+    "content": "This article explains the step-by-step process of creating a new article in the Knowledge Base.",
+    "createdAt": "2024-11-29T12:00:00Z"
+  },
+  {
+    "title": "Editing Articles",
+    "content": "Learn how to edit existing articles in the Knowledge Base, including tips for formatting and collaboration.",
+    "createdAt": "2024-11-28T10:30:00Z"
+  },
+  {
+    "title": "Deleting Articles",
+    "content": "A guide to safely deleting articles while preserving important data and maintaining system integrity.",
+    "createdAt": "2024-11-27T09:00:00Z"
+  },
+  {
+    "title": "Best Practices for Article Titles",
+    "content": "Discover the best practices for writing effective and engaging article titles for your Knowledge Base.",
+    "createdAt": "2024-11-26T15:45:00Z"
+  },
+  {
+    "title": "Organizing Your Knowledge Base",
+    "content": "Tips and strategies for structuring your Knowledge Base to ensure content is easily accessible.",
+    "createdAt": "2024-11-25T14:20:00Z"
+  }
+]
