@@ -1,7 +1,13 @@
 const db = require("../firebase");
+require("dotenv").config();
 const axios = require("axios");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY; // Replace with your Gemini API key
+console.log(GEMINI_API_KEY);
+
+// Initialize the Google Generative AI client
+const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
 exports.searchArticles = async (req, res) => {
   try {
@@ -18,51 +24,44 @@ exports.searchArticles = async (req, res) => {
       ...doc.data(),
     }));
 
-    // Prepare the prompt for Gemini
-    const prompt = `
-      You are an AI that ranks articles based on their relevance to the query "${query}".
-      The articles are:
-      ${articles
-        .map((article, index) => `${index + 1}. ${article.title}`)
-        .join("\n")}
-      Return the top 3 most relevant article titles.
-    `;
+    // Prepare the article list for the AI prompt
+    const articleList = articles
+      .map((article, index) => `${index + 1}. ${article.title}`)
+      .join("\n");
 
-    // Make a request to Google Gemini
-    const response = await axios.post(
-      "https://ai.google.dev/v1/gemini/completions",
+    const prompt = `Rank the following articles by relevance to the query: "${query}" and return only the article titles as a plain list, one title per line. Do not include numbering, explanations, or extra text.
+    
+The articles are:
+${articleList}`;
 
-      {
-        model: "gemini-large",
-        prompt: prompt,
-        max_tokens: 70,
-        temperature: 0.7,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${GEMINI_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    // Use the Gemini model to generate content
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const result = await model.generateContent(prompt);
 
-    // Process the response and filter articles
-    const rankedTitles = response.data.choices[0].text
-      .trim()
+    // Parse suggestions
+    const suggestions = result.response
+      .text()
       .split("\n")
-      .map((line) => line.trim());
+      .map((s) => s.trim())
+      .filter((s) => s !== ""); // Remove empty lines
 
-    const relevantArticles = articles.filter((article) =>
-      rankedTitles.includes(article.title)
-    );
+    // Match AI suggestions with actual articles
+    const relevantArticles = suggestions
+      .map((suggestion) => {
+        const normalizedSuggestion = suggestion.toLowerCase();
 
-    res.json(relevantArticles);
+        return articles.find(
+          (article) => article.title.toLowerCase() === normalizedSuggestion
+        );
+      })
+      .filter(Boolean); // Remove any unmatched items
+
+    res.json({ relevantArticles });
   } catch (error) {
-    console.error(
-      "Error performing AI-powered search:",
-      error.response?.data || error.message
-    );
-    res.status(500).json({ error: "Error performing AI-powered search" });
+    console.error("Error performing AI-powered search:", error);
+    res.status(500).json({
+      error: "Failed to fetch AI-powered suggestions. Check logs for details.",
+    });
   }
 };
 
