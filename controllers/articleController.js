@@ -55,7 +55,7 @@ ${articleList}`;
         );
       })
       .filter(Boolean); // Remove any unmatched items
-
+    console.log("sending relevant articles", relevantArticles);
     res.json({ relevantArticles });
   } catch (error) {
     console.error("Error performing AI-powered search:", error);
@@ -73,6 +73,7 @@ exports.getArticles = async (req, res) => {
       id: doc.id,
       ...doc.data(),
     }));
+    console.log("sending articles", articles);
     res.json(articles);
   } catch (error) {
     console.error("Error fetching articles:", error);

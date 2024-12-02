@@ -11,26 +11,72 @@ admin.initializeApp({
 
 const db = admin.firestore();
 
-// Read mock data from JSON file
-const mockData = JSON.parse(fs.readFileSync("mockData.json", "utf-8"));
+const mockComments = [
+  {
+    articleId: "VNfHVlaV2XdakSJVWGxE",
+    comment: "Great article! Learned a lot about AI.",
+    author: "John Doe",
+    createdAt: new Date().toISOString(),
+  },
+  {
+    articleId: "Zf6taDLA30N7kJqDgEM4",
+    comment: "I disagree with some points here.",
+    author: "Jane Smith",
+    createdAt: new Date().toISOString(),
+  },
+  {
+    articleId: "bfvGQjFJjYLsoZdPeebu",
+    comment: "This needs more examples.",
+    author: "Alice Johnson",
+    createdAt: new Date().toISOString(),
+  },
+  {
+    articleId: "gL9iXUZrBsaDAbEBkTzz",
+    comment: "Very insightful article, thanks for sharing!",
+    author: "Bob Brown",
+    createdAt: new Date().toISOString(),
+  },
+  {
+    articleId: "hSM09Wa4cl2y4WupXvcL",
+    comment: "Some links are broken, please fix them.",
+    author: "Charlie Davis",
+    createdAt: new Date().toISOString(),
+  },
+  {
+    articleId: "mnNetzZu86dMr1kgRJBR",
+    comment: "Well-written and easy to follow.",
+    author: "Emily White",
+    createdAt: new Date().toISOString(),
+  },
+  {
+    articleId: "wGnk5wOeoQ9eEvHWuHlN",
+    comment: "Is there a follow-up to this article?",
+    author: "Frank Green",
+    createdAt: new Date().toISOString(),
+  },
+  {
+    articleId: "wp2j3hLAg57Vg8GhzUOU",
+    comment: "I love the detailed explanation in this piece.",
+    author: "Grace Blue",
+    createdAt: new Date().toISOString(),
+  },
+];
 
-// Function to upload data to Firestore
-const uploadData = async () => {
+// Script to populate comments
+const addMockComments = async () => {
   try {
     const batch = db.batch();
-    const collectionRef = db.collection("articles");
 
-    mockData.forEach((data) => {
-      const docRef = collectionRef.doc(); // Auto-generate document ID
-      batch.set(docRef, data);
+    mockComments.forEach((comment) => {
+      const commentRef = db.collection("comments").doc();
+      batch.set(commentRef, comment);
     });
 
     await batch.commit();
-    console.log("Mock data uploaded successfully!");
+    console.log("Mock comments added successfully!");
   } catch (error) {
-    console.error("Error uploading mock data:", error);
+    console.error("Error adding mock comments:", error);
   }
 };
 
-// Run the upload function
-uploadData();
+addMockComments();
